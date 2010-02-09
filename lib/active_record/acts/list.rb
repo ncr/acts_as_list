@@ -54,7 +54,7 @@ module ActiveRecord
             include ActiveRecord::Acts::List::InstanceMethods
 
             def acts_as_list_class
-              ::#{self.name}
+              self.class
             end
 
             def position_column

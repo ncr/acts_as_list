@@ -16,6 +16,11 @@ def setup_db
       t.column :created_at, :datetime      
       t.column :updated_at, :datetime
     end
+    
+    create_table :sti_mixins do |t|
+      t.column :position, :integer
+      t.column :type, :string
+    end
   end
 end
 
@@ -44,6 +49,16 @@ class ListWithStringScopeMixin < ActiveRecord::Base
   acts_as_list :column => "pos", :scope => 'parent_id = #{parent_id}'
 
   def self.table_name() "mixins" end
+end
+
+class StiMixin < ActiveRecord::Base
+  acts_as_list
+end
+
+class StiMixinSub1 < StiMixin
+end
+
+class StiMixinSub2 < StiMixin
 end
 
 
@@ -327,6 +342,18 @@ class ListSubTest < Test::Unit::TestCase
 
     assert_equal 1, ListMixin.find(3).pos
     assert_equal 2, ListMixin.find(4).pos
+  end
+  
+  def test_sti
+    new = StiMixinSub1.create
+    assert_equal 1, new.position
+    new = StiMixinSub1.create
+    assert_equal 2, new.position
+
+    new = StiMixinSub2.create
+    assert_equal 1, new.position
+    new = StiMixinSub2.create
+    assert_equal 2, new.position
   end
 
 end
